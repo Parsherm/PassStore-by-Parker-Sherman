@@ -1,3 +1,11 @@
+"""
+Filename: sign_in_ui.py
+Author: Parker Sherman
+Date: 2025-02-02
+Version: 1.0
+Description: This is sign in and authentication for PassStore
+"""
+
 from customtkinter import *
 import customtkinter as ct
 import main_screen
@@ -12,7 +20,7 @@ def on_sign_in():
         encryption_key = encryption.authenticate_user(username, password)  # Use the authenticate_user function
         if encryption_key:
             root.destroy()  # Close sign-in window
-            main_screen.open_main_screen(username, encryption_key)  # Pass encryption key to main screen
+            main_screen.open_main_screen(username)  # Pass encryption key to main screen
         else:
             warning = CTkLabel(frame, text="Invalid Username or Password.", font=("Arial", 14, "bold"), fg_color="#8C2F39", text_color="#E0E0E0", corner_radius=20)
             warning.grid(row=8, column=0, ipadx=5, padx=10, pady=15)
