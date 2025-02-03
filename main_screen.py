@@ -10,10 +10,31 @@ from customtkinter import *
 import customtkinter as ct
 import PassGenerator
 import Manage
+import json
+from encryption import decrypt_password  # Import the function
 
 # Variable to keep track of the number of passwords
 num_of_passwords = 0
 
+# Function to load user data from the JSON file
+def load_user_data(username):
+    try:
+        with open("user_credentials.json", "r") as f:
+            data = json.load(f)
+            
+            return data[username]
+        
+    except FileNotFoundError:
+        return None
+
+# Function to get the passwords of a specific user
+def get_user_passwords(username):
+    # Load the specific user's data from the file
+    user_data = load_user_data(username)
+    
+    
+    return user_data['passwords']
+    
 
 # This function makes a frame that displays the current user, and contains a signout button
 def user_window(user):
@@ -76,7 +97,7 @@ def pass_gen():
     pass_title.grid(row=0, column=0, padx=(10, 5), pady=5)
 
 # This function makes a frame that allows the user to manage various aspects of the app
-def manage_frame():
+def manage_frame(user):
     
 
     manage = CTkFrame(window, border_width=3)
@@ -88,30 +109,22 @@ def manage_frame():
     frame_title.grid(row=0, column=0, padx=10, pady=10)
 
     add_btn = CTkButton(manage, text="Add Pasword", font=("Arial", 14), fg_color="transparent", corner_radius=0, border_width=0, 
-                        command= Manage.add_password)
+                        command= lambda: Manage.add_password(user))
     add_btn.grid(row=1, column=0, ipady=5, padx=(3, 3.5), sticky="ew")
 
-    manage_btn = CTkButton(manage, text="Manage Passwords", font=("Arial", 14), fg_color="transparent", corner_radius=0, border_width=0, command= Manage.manage_passwords)
+    manage_btn = CTkButton(manage, text="Manage Passwords", font=("Arial", 14), fg_color="transparent", corner_radius=0, border_width=0, command= lambda: Manage.manage_passwords(user))
     manage_btn.grid(row=2, column=0, ipady=5, padx=(3, 3.5), sticky="ew")
 
-    settings_btn = CTkButton(manage, text="Settings", font=("Arial", 14), fg_color="transparent", corner_radius=0, border_width=0, command= Manage.open_settings)
+    settings_btn = CTkButton(manage, text="Settings", font=("Arial", 14), fg_color="transparent", corner_radius=0, border_width=0, command= lambda: Manage.open_settings(user))
     settings_btn.grid(row=3, column=0, ipady=5, padx=(3, 3.5), sticky="ew")
 
     about_btn = CTkButton(manage, text="About", font=("Arial", 14), fg_color="transparent", corner_radius=0, border_width=0, command= Manage.open_about)
     about_btn.grid(row=4, column=0, ipady=5, padx=(3, 3.5), sticky="ew")
 
-    spacer_box = CTkFrame(manage, border_width=0, height=265, fg_color="#213844")
-    spacer_box.grid(row=5, column=0, padx=10, sticky="ew")
 
-    search_bar = CTkEntry(manage, placeholder_text="Search a password")
-    search_bar.grid(row=6, column=0, padx=20, pady=10, sticky="ew")
 
-    search_btn = CTkButton(manage, text="Search")
-    search_btn.grid(row=7, column=0)
-
-def password_select():
-
-    # Creating the frame that holds the passwords
+def password_select(user):
+    """Loads and displays the user's saved passwords, decrypting them first."""
     global password_frame
     password_frame = CTkScrollableFrame(master=window, label_text="Passwords", border_width=3)
     password_frame.grid(row=1, column=1, padx=20, ipadx=5, pady=10, sticky="nsew")
@@ -121,17 +134,30 @@ def password_select():
     password_frame.grid_columnconfigure(2, weight=1)
     password_frame.grid_rowconfigure(0, weight=1)
 
-    user_info = ct.CTkLabel(password_frame, text="Username/Email", font=("Arial", 18))
+    user_info = ct.CTkLabel(password_frame, text="Website Name", font=("Arial", 18))
     user_info.grid(row=0, column=0, pady=(0, 10))
 
-    pass_info = ct.CTkLabel(password_frame, text="Password",  font=("Arial", 18))
+    pass_info = ct.CTkLabel(password_frame, text="Password", font=("Arial", 18))
     pass_info.grid(row=0, column=1, pady=(0, 10))
 
-    show_password = ct.CTkLabel(password_frame, text="Show",  font=("Arial", 18))
+    show_password = ct.CTkLabel(password_frame, text="Show", font=("Arial", 18))
     show_password.grid(row=0, column=2, pady=(0, 10))
 
-    copy_password = ct.CTkLabel(password_frame, text="Copy",  font=("Arial", 18))
+    copy_password = ct.CTkLabel(password_frame, text="Copy", font=("Arial", 18))
     copy_password.grid(row=0, column=3, pady=(0, 10))
+
+    passwords = get_user_passwords(user)  # Load passwords for this user
+
+    user_data = load_user_data(user)
+    encryption_key = user_data.get("encryption_key")  # Retrieve user's encryption key
+
+    for idx, password_data in enumerate(passwords):
+        decrypted_password = decrypt_password(encryption_key, password_data["password"])  # Use imported function
+        add_new_password(password_data["username"], decrypted_password)  # Display decrypted password
+    
+    refresh_btn = ct.CTkButton(password_frame, text="Refresh", font=("Arial", 12), width=50, command=lambda: password_select(user))
+    refresh_btn.grid(row=0, column=4, sticky="w")
+
 
 def show_password(password_entry):
     if password_entry.cget("show") == "*":
@@ -171,7 +197,7 @@ def copy_to_clipboard(entry):
     window.clipboard_append(entry)  # Copy entry text
     window.update()  # Keep clipboard data available
 
-def open_main_screen(user, encryption_key):
+def open_main_screen(user):
     global window
     window = ct.CTk()
     window.title("PassStore - Main Dashboard")
@@ -187,9 +213,9 @@ def open_main_screen(user, encryption_key):
 
     pass_gen()
 
-    manage_frame()
+    manage_frame(user)
 
-    password_select()
+    password_select(user)
     
     window.mainloop() 
 
