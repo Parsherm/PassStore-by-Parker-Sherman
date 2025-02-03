@@ -1,4 +1,10 @@
-# encryption.py
+"""
+Filename: encryption.py
+Author: Parker Sherman
+Date: 2025-02-02
+Version: 1.0
+Description: This program encrypts all the user's data
+"""
 import json
 import base64
 import hashlib
