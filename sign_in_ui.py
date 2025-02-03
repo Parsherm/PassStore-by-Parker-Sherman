@@ -2,6 +2,7 @@ from customtkinter import *
 import customtkinter as ct
 import main_screen
 import encryption  # Import the encryption module
+import time # For making sure the UI doesn't move too fast
 
 def on_sign_in():
     username = username_entry.get()
@@ -34,6 +35,12 @@ def open_register_window():
     register_window.title("Register")
     register_window.geometry("360x300")
 
+    register_window.lift()         # Bring the window to the front
+    register_window.focus_force()   # Force focus on the popup
+    register_window.grab_set()      # Prevents interacting with the main window until closed
+
+    register_window.grid_columnconfigure(0, weight=1)
+
     # Register Username and Password Entry
     register_username_entry = CTkEntry(master=register_window, placeholder_text="Username", height=50, width=200, font=("Arial", 18), corner_radius=20)
     register_username_entry.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
@@ -52,9 +59,14 @@ def open_register_window():
 
         if username and password:
             if encryption.register_user(username, password):
-                CTkLabel(register_window, text="✅ User Registered!", font=("Arial", 14, "bold"), fg_color="#4CAF50", text_color="#E0E0E0", corner_radius=20).grid(row=4, column=0, padx=10, pady=15)
+                success = CTkLabel(register_window, text="✅ User Registered!", font=("Arial", 14, "bold"), fg_color="#4CAF50", text_color="#E0E0E0", corner_radius=20)
+                success.grid(row=4, column=0, padx=10, pady=15, sticky="ew")
+                register_window.update()
+                time.sleep(1.5)
+                register_window.destroy()
             else:
-                CTkLabel(register_window, text="❌ Username already exists!", font=("Arial", 14, "bold"), fg_color="#F44336", text_color="#E0E0E0", corner_radius=20).grid(row=4, column=0, padx=10, pady=15)
+                CTkLabel(register_window, text="❌ Username already exists!", font=("Arial", 14, "bold"), 
+                fg_color="#F44336", text_color="#E0E0E0", corner_radius=20).grid(row=4, column=0, padx=10, pady=15, sticky="ew")
 
     register_button = CTkButton(register_window, text="Register", font=("Arial", 18, "bold"), command=register, corner_radius=32)
     register_button.grid(row=3, column=0, padx=20, pady=15)
