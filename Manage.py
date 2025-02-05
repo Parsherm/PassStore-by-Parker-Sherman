@@ -89,29 +89,25 @@ def delete_account(user_to_delete):
 # Function to open the about section
 def open_about():
     popup = create_popup("PassStore - About")
-    popup.geometry("800x600")
-    about = ctk.CTkTextbox(popup, font=("Arial", 14), state="disabled")
-    about.pack(pady=10)
-    about.insert("0.0", """PassStore is a project that is created by Parker Sherman to simply, effectively, and convienently
-                 store passwords on-device. There can be as many users on one device as each user gets a unique encrypted key! 
-                 Passwords are also encrypted at the end of every session so there is no need to worry about basic security! There
-                 is also a function that allows you to generate a secure password using the secrets python Library.
+    popup.geometry("400x300")
+    about = ctk.CTkTextbox(popup, font=("Arial", 14), wrap="word")
+    about.pack(pady=10, padx=10, fill="both", expand=True)
+    
+    # Enable text input temporarily
+    about.configure(state="normal")
 
-                 HOW TO USE
-                 Add Password: Adding a password is simple! Press the Add Password button in the Manage tab and enter a Website and
-                 the corresponding password. A password cannot be saved if there is not valid information (Website AND Password)
+    # Insert formatted text manually
+    about.insert("1.0", "PASSSTORE - ABOUT\n\n")
+    about.insert("2.0", "PassStore is a project created by Parker Sherman to securely store passwords on-device.\n\n")
 
-                 Manage Passwords: Right now the only functionality is to delete passwords, but it the future I plan to add direct editing 
-                 as well. To delete a password, press Manage Passwords and a list of all current passwords will appear. There is a handy delete
-                 button next to each password! To remove the password from the main UI, you must press the "Refresh" button in the main password frame.
+    about.insert("3.0", "HOW TO USE\n",)
+    about.insert("4.0", "• ADD PASSWORD: Press the 'Add Password' button in the Manage tab and enter a website & password.\n\n")
+    about.insert("5.0", "• MANAGE PASSWORDS: Currently, only deletion is supported, but editing will be added in the future.\n\n")
+    about.insert("6.0", "• SETTINGS: You can delete your account, but this action is irreversible!\n\n")
+    about.insert("7.0", "• GENERATE A PASSWORD: Use the slider to set the length and generate a secure password using Python’s `secrets` library.\n")
 
-                 Settings: There is only one setting and that is to delete your current account. BE CAREFUL!! There is no way to recover an account once
-                 deleted, so all information will be lost. In the future, I plan to add color options for the UI here.
-
-                 Generate a Password: In the top right of the main UI there is a frame that allows you to generate a secure password using the secrets library.
-                 This library cryptographically generates a strong, secure password. To generate, drag the slider to your desired length of characters
-                 and press generate! The password will appear in the text box for copying or even editing should you choose.
-                 """)
+    # Make it read-only again
+    about.configure(state="disabled")
 
 # Function to add a password
 def save_password(popup, user, name, password):
