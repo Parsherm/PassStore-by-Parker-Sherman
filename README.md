@@ -1,5 +1,8 @@
 # PassStore
-PassStore is a project that is created by Parker Sherman to simply, effectively, and convienently store passwords on-device. There can be as many users on one device as each user gets a unique encrypted key! Passwords are also encrypted at the end of every session so there is no need to worry about basic security! There is also a function that allows you to generate a secure password using the secrets python Library.
+PassStore is a project that is created by Parker Sherman to simply, effectively, and convienently store passwords on-device. There can be as many users on one device as each user gets a unique encrypted key! Passwords are also encrypted at the end of every session so there is no need to worry about basic security! There is also a function that allows you to generate a secure password using the secrets python Library.'
+
+# How to Install
+Download "PassStore.exe" from this Github repository. This file is an install wizard that will allow you to use the program without downloading the dependicies that are used in this project. After install, go into the folder and run "PassStore.exe" to start the program.
 
 # How to use
 **Add Password:** Adding a password is simple! Press the Add Password button in the Manage tab and enter a Website and the corresponding password. A password cannot be saved if there is not valid information (Website AND Password)
